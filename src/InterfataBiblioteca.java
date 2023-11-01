@@ -8,8 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 //import static sun.tools.jconsole.inspector.XDataViewer.dispose;
 
@@ -17,6 +20,8 @@ import java.util.ArrayList;
 public class InterfataBiblioteca {
     //private ArrayList<Reader>Slist=new ArrayList<Reader>();
     //private ArrayList<Book>Clist=new ArrayList<Book>();
+
+    private Singleton singleton;
 
     private static JFrame framePrincipal;
     private static JFrame framePersoana;
@@ -27,35 +32,40 @@ public class InterfataBiblioteca {
 
     private static JFrame  persNouFrame;
 
+    private static JFrame interFrame;
+
+
 
 
     private static CardLayout cardLayout;
 
-    public ArrayList<Reader> Slist = new ArrayList<Reader>();
-    public ArrayList<Reader> listaCititor() {
-       // ArrayList<Reader> Slist = new ArrayList<Reader>();  //LISTA PENTRU CITITOR    CREARE LISTA DE CITITORI
-        Slist.add(new Reader());
-        Slist.get(0).setcodinreg("123");
-        Slist.get(0).setNume("Baciu");
-        Slist.get(0).setPrenume("Bogdan");
 
+    private ArrayList<StudentReader> Slist = new ArrayList<StudentReader>();
+    private ArrayList<StudentReader> listaCititor() {
+        // ArrayList<Reader> Slist = new ArrayList<Reader>();  //LISTA PENTRU CITITOR    CREARE LISTA DE CITITORI
+        String[] codInreg = {"123", "345", "567", "789"};
+        String[] nume = {"Georgescu", "Grigorescu", "Marin", "Micu"};
+        String[] initTata = {"S", "I", "M", "L"};
+        String[] prenume = {"Ioana", "Maria", "Gheorghe", "Ana"};
+        String[] facultate = {"UTCN", "UBB", "UVT", "UniTBv"};
+        String[] judet = {"Cluj", "Cluj", "Timisoara", "Brasov"};
 
-        Slist.add(new Reader());
-        Slist.get(1).setcodinreg("345");
-        Slist.get(1).setNume("Grigorescu");
-        Slist.get(1).setPrenume("Maria");
+        for (int i = 0; i < codInreg.length; i++) {
+            StudentReader student = new StudentReader();
+            student.setcodinreg(codInreg[i]);
+            student.setNume(nume[i]);
+            student.setInitTata(initTata[i]);
+            student.setPrenume(prenume[i]);
+            student.setFacultate(facultate[i]);
+            student.setJudF(judet[i]);
+        Slist.add(student);
+    }
 
-
-        Slist.add(new Reader());
-        Slist.get(2).setcodinreg("567");
-        Slist.get(2).setNume("Moldovan");
-        Slist.get(2).setPrenume("Ioana");
-
-        return Slist;
+            return Slist;
     }
 
 
-    public static ArrayList<Book> Clist = new ArrayList<Book>();
+    private ArrayList<Book> Clist = new ArrayList<Book>();
 
     public ArrayList<Book> listaCarti() {
         //ArrayList<Book> Clist = new ArrayList<Book>();   // LISTA PENTRU CARTE        CREARE LISTA DE CARTI
@@ -96,6 +106,7 @@ public class InterfataBiblioteca {
         //listaCititor();
         for(Reader cit:listaCititor()){
             if(cit.getCodinreg().equals(cod)){
+                cititor=cit.toString();
                 return true;
             }
         }
@@ -107,8 +118,10 @@ public class InterfataBiblioteca {
     ArrayList<Book> carti = listaCarti();
     int cnt=1;
     int cntRet=1;
+    public String cititor;
 
     private  void setupGUI(){
+
 
 
         //CREARE CONTAINER PENTRU A FACE SWITCH INTRE FERESTRE
@@ -275,6 +288,7 @@ public class InterfataBiblioteca {
         JLabel idCartelabelRet=new JLabel("Scrieti ID-ul cartii:");
         JTextField idCartitextRet=new JTextField(15);
         JButton retCartebutton = new JButton("Returneaza");
+        JButton returnFrameReturnare = new JButton("Revenire la meniu");
         JTextArea textRet=new JTextArea();
 
         //nrCartitext.getText();
@@ -286,10 +300,27 @@ public class InterfataBiblioteca {
         panelRet.add(idCartelabelRet);
         panelRet.add(idCartitextRet);
         panelRet.add(retCartebutton);
+        panelRet.add(returnFrameReturnare);
         panelRet.add(textRet);
 
         retFrame.add(panelRet);
         retFrame.pack();
+
+
+        //FEREASTRA PENTRU INTEROGARE
+        interFrame=new JFrame();
+        interFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        interFrame.setSize(400, 150);
+
+        //JList interList=new JList();
+        JPanel panelInter=new JPanel();
+        //panelInter.setLayout(new BoxLayout(panelPersnou,BoxLayout.Y_AXIS));
+        //JLabel labelInter=new JLabel();
+        JTextArea textInter=new JTextArea();
+
+        interFrame.add(panelInter);
+        //interFrame.add(labelInter);
+        interFrame.add(textInter);
 
 
             frameStart.setVisible(true);
@@ -315,7 +346,7 @@ public class InterfataBiblioteca {
             }
         });
 
-        ArrayList<Reader> citReader=listaCititor();
+        ArrayList<StudentReader> citReader=listaCititor();
 
         buttonLogare.addActionListener(new ActionListener() {
             @Override
@@ -348,9 +379,9 @@ public class InterfataBiblioteca {
                 if (!prenume) {
                     JOptionPane.showMessageDialog(null, "Prenumele contine cel putin un caracter numeric");
                 }
-                if (!iTata) {
-                    JOptionPane.showMessageDialog(null, "Initiala contine cel putin un caracter numeric");
-                }
+               // if (!iTata) {
+                 //   JOptionPane.showMessageDialog(null, "Initiala contine cel putin un caracter numeric");
+                //}
                 if (!universitate) {
                     JOptionPane.showMessageDialog(null, "Campul pentru universitate contine cel putin un caracter numeric");
                 }
@@ -367,9 +398,26 @@ public class InterfataBiblioteca {
                 //boolean camp=false;
 
 
-                for(Reader r:citReader){
+                for(StudentReader r:citReader){
                     if(!(r.getCodinreg().equals(ID))){
-                        citReader.add(r);
+                        if(camp && initTata.isEmpty()){
+                            System.out.println("VERIFICARE 1");
+                            r=new StudentReader(ID,numePers,prenumePers,univPers,judPers);
+                            citReader.add(r);
+                            //citReader.add(r);
+                            System.out.println("Cititor nou:"+r);
+                            System.out.println(citReader);
+                        }
+                        else{
+                            System.out.println("VERIFICARE 2");
+                            r=new StudentReader(ID,numePers,initTata,prenumePers,univPers,judPers);
+                            //citReader.add(r);
+                            System.out.println("Cititor nou:"+r);
+                            citReader.add(r);
+
+                            System.out.println(citReader);
+                        }
+
                         break;
                     }
 
@@ -449,9 +497,14 @@ public class InterfataBiblioteca {
         });
          */
 
+        singleton=Singleton.getInstance();
+        //Singleton singleton=Singleton.getInstance();
+        //singleton.dataCurenta();
         persImprbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Singleton singleton
+
                     int nrCartiimpr;
                     String idCarte=idCartitext.getText();
                     //String nrCarte=nrCartitext.getText();
@@ -504,6 +557,18 @@ public class InterfataBiblioteca {
                                                     idCartitext.setText("");
                                                     idCarte=idCartitext.getText();
 
+                                                    //SINGLETON  -l-am pus aici pentru a limita scrierea in fisier
+
+                                                singleton.dataCurenta();
+                                                try (FileWriter writer = new FileWriter("Afisare data", true)) {
+                                                    writer.write(cititor+"\n");
+                                                    writer.write(bk+"\n");
+                                                    writer.write(singleton.getUltimaAccesare() + "\n");
+                                                } catch (IOException ex) {
+                                                    ex.printStackTrace();
+                                                    System.out.println("Eroare la scrierea in fisier");
+                                                }
+
                                             }
                                             else{
                                                 JOptionPane.showMessageDialog(null, "Nu puteti " +
@@ -544,6 +609,14 @@ public class InterfataBiblioteca {
             public void actionPerformed(ActionEvent e) {
                 framePersoana.setVisible(false);
                 retFrame.setVisible(true);
+            }
+        });
+
+        retCartebutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                framePersoana.setVisible(false);
+                retFrame.setVisible(true);
 
 
                 int nrCartiret;
@@ -576,7 +649,7 @@ public class InterfataBiblioteca {
                         //System.out.println("CONTOR:"+cnt);
                         if (cntRet <= Book.MAX_IMPR) {
                             nrCartiret = Integer.parseInt(nrCarti);
-                            //System.out.println("VERIFICARE 1");
+                            System.out.println("VERIFICARE 1");
                             //try{
                             System.out.println("INTRA IN TRY");
                             if (nrCartiret > Book.MAX_IMPR) {
@@ -605,7 +678,7 @@ public class InterfataBiblioteca {
                                             textRet.append(bk.toString());
                                             //listImpr.add(bk.toString(),listImpr);
                                             JOptionPane.showMessageDialog(null, "Cartea a " +
-                                                    "fost imprumutata cu succes");
+                                                    "fost returnata cu succes");
                                             idCartitextRet.setText("");
                                             idCarte = idCartitextRet.getText();
 
@@ -650,10 +723,35 @@ public class InterfataBiblioteca {
                 imprFrame.setVisible(false);
             }
         });
+
+        returnFrameReturnare.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                framePersoana.setVisible(true);
+                retFrame.setVisible(false);
+            }
+        });
+
+        interogareButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                framePersoana.setVisible(false);
+                interFrame.setVisible(true);
+                //StringBuffer s=new StringBuffer("");
+
+                for(Book bk : cartiPers){
+                    System.out.println(bk);
+                    //s.append("\n");
+                    StringBuilder s=new StringBuilder();  // Creeaza un nou sir pentru fiecare carte
+                    s.append(bk.toString());   //adauga reprezentarea sub forma de sir de caractere a obiectului bk
+                    textInter.append(s.toString());
+                    textInter.append(System.lineSeparator());
+                }
+            }
+        });
+
     }
-
-
-
 
     public static void main(String[] args){
 

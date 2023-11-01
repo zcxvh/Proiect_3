@@ -8,6 +8,14 @@ public class StudentReader extends Reader {
     StudentReader(){
 
     }
+
+    StudentReader(String codInreg,String nume,
+                  String prenume,String facultate,String judetF){
+        super(codInreg,nume,prenume);
+        this.facultate=facultate;
+        this.judetF=judetF;
+
+    }
     StudentReader (String codInreg,String nume,
                               String prenume,String initTata,String facultate,String judetF){
 
