@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,8 +29,9 @@ public class InterfataBiblioteca {
     private static JFrame  persNouFrame;
 
 
-
+    private Singleton singleton;
     private static CardLayout cardLayout;
+    private Singleton AfisData;
 
     public ArrayList<Reader> Slist = new ArrayList<Reader>();
     public ArrayList<Reader> listaCititor() {
@@ -66,7 +68,7 @@ public class InterfataBiblioteca {
 
         {
             try {
-                BufferedReader reader = new BufferedReader(new FileReader("Carti.txt"));    //CITIREA DIN FISIER
+                BufferedReader reader = new BufferedReader(new FileReader("src\\Carti.txt"));    //CITIREA DIN FISIER
                 //System.out.println(new File("").getAbsolutePath());
                 //FileInputStream filestream= new FileInputStream("Carti.txt");
                 int i = 0;
@@ -96,6 +98,7 @@ public class InterfataBiblioteca {
         //listaCititor();
         for(Reader cit:listaCititor()){
             if(cit.getCodinreg().equals(cod)){
+
                 return true;
             }
         }
@@ -448,10 +451,16 @@ public class InterfataBiblioteca {
             }
         });
          */
-
+        singleton = Singleton.getInstance();
         persImprbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                singleton.dataCurenta();
+                try (FileWriter writer = new FileWriter("Afisare data", true)) {
+                    writer.write(singleton.getUltimaAcesare() + "\n");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                     int nrCartiimpr;
                     String idCarte=idCartitext.getText();
                     //String nrCarte=nrCartitext.getText();
